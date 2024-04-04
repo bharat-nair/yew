@@ -1,0 +1,6 @@
+virtualenv/
+__pycache__/
+*.json
+build/
+*.egg
+*.egg-info
