@@ -57,28 +57,3 @@ def fetch_player(name: str):
         player_activities[activity["name"]] = activity
 
     return {"skills": player_skills, "activities": player_activities}
-
-
-def fetch_wikicode(name: str):
-
-    url = f"{WIKI_URL}?action=query&prop=revisions&titles={name}&rvslots=*&rvprop=content&formatversion=2&format=json"
-    print(url)
-    response = requests.get(url, headers={"User-Agent": USER_AGENT}).json()
-
-    wikicode: str = (
-        response.get("query", {})
-        .get("pages", [{}])[0]
-        .get("revisions", [{}])[0]
-        .get("slots", {})
-        .get("main", {})
-        .get("content")
-    )
-    # print(wikicode)
-    wikicode = wikicode.replace("\n", "")
-
-    # templates = mwparserfromhell.parse(wikicode).filter_templates()
-    # print(templates)
-    # infobox_template = templates[1]
-    # print(infobox_template.name)
-
-    return wikicode
