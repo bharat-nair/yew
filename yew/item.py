@@ -1,6 +1,6 @@
-from osrs.utils.api import fetch_item, fetch_item_prices
+from yew.utils.api import fetch_item, fetch_item_prices
 from datetime import datetime
-from osrs.utils.format import get_friendly_unit
+from yew.utils.format import get_friendly_unit
 
 
 class Item:
