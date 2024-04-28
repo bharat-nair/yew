@@ -53,11 +53,10 @@ class Prices:
         self.high_price_volume = 0
         self.low_price_volume = 0
         self.since = None
-
         prices_data = fetch_item_prices(self.item_id, self.interval)
 
         if self.interval == "latest":
-            prices_data = prices_data.get(self.item_id, {})
+            prices_data = prices_data.get(str(self.item_id), {})
 
             if self.friendly_units:
                 self.high_price = get_friendly_unit(prices_data.get("high", 0))
