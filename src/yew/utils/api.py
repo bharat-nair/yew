@@ -9,10 +9,18 @@ WIKI_URL = "https://oldschool.runescape.wiki/api.php"
 USER_AGENT = "GE APY"
 
 
-def fetch_item(item_id):
+def fetch_item(item_id: int = 0, name: str = ""):
 
     with open("items.json", "r") as f:
-        item_data = json.loads(f.read()).get(item_id, {})
+        items = json.loads(f.read())
+        if item_id:
+            item_data = items.get(str(item_id), {})
+        elif name:
+            for _id in items:
+                if items[_id].get("name").lower() in name.lower():
+                    item_data = items[_id]
+                    item_id = _id
+                    break
 
     url = f"{ITEMS_URL}/catalogue/detail.json?item={item_id}"
     response = (
@@ -57,28 +65,3 @@ def fetch_player(name: str):
         player_activities[activity["name"]] = activity
 
     return {"skills": player_skills, "activities": player_activities}
-
-
-def fetch_wikicode(name: str):
-
-    url = f"{WIKI_URL}?action=query&prop=revisions&titles={name}&rvslots=*&rvprop=content&formatversion=2&format=json"
-    print(url)
-    response = requests.get(url, headers={"User-Agent": USER_AGENT}).json()
-
-    wikicode: str = (
-        response.get("query", {})
-        .get("pages", [{}])[0]
-        .get("revisions", [{}])[0]
-        .get("slots", {})
-        .get("main", {})
-        .get("content")
-    )
-    # print(wikicode)
-    wikicode = wikicode.replace("\n", "")
-
-    # templates = mwparserfromhell.parse(wikicode).filter_templates()
-    # print(templates)
-    # infobox_template = templates[1]
-    # print(infobox_template.name)
-
-    return wikicode

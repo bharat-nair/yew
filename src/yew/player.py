@@ -1,4 +1,4 @@
-from osrs.utils.api import fetch_player
+from yew.utils.api import fetch_player
 
 
 class Skill:
