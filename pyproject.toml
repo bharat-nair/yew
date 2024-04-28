@@ -4,13 +4,20 @@ build-backend = "hatchling.build"
 
 [project]
 name = "yew"
-version = "0.1.1-dev"
+version = "0.1.1-dev1"
 authors = [
   { name="Bharat Nair", email="bharat@rubberducker.xyz" },
 ]
 description = "An OldSchool RuneScape API wrapper for Python."
 readme = "README.md"
 requires-python = ">=3.8"
+dependencies = [
+  "certifi==2024.2.2",
+  "charset-normalizer==3.3.2",
+  "idna==3.6",
+  "requests==2.31.0",
+  "urllib3==2.2.1",
+]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
