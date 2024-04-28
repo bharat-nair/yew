@@ -2,5 +2,6 @@ virtualenv/
 __pycache__/
 *.json
 build/
+dist/
 *.egg
 *.egg-info

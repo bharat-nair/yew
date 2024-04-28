@@ -9,10 +9,18 @@ WIKI_URL = "https://oldschool.runescape.wiki/api.php"
 USER_AGENT = "GE APY"
 
 
-def fetch_item(item_id):
+def fetch_item(item_id: int = 0, name: str = ""):
 
     with open("items.json", "r") as f:
-        item_data = json.loads(f.read()).get(item_id, {})
+        items = json.loads(f.read())
+        if item_id:
+            item_data = items.get(str(item_id), {})
+        elif name:
+            for _id in items:
+                if items[_id].get("name").lower() in name.lower():
+                    item_data = items[_id]
+                    item_id = _id
+                    break
 
     url = f"{ITEMS_URL}/catalogue/detail.json?item={item_id}"
     response = (

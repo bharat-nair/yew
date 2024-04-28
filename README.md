@@ -4,7 +4,13 @@
 
 ## Installation
 
-Currently installation is only supported in the development branch. `yew` can directly be installed from its repository as:
+Install from PyPi:
+
+```
+pip install yew
+```
+
+You can also install the development version from the repository as:
 
 ```
 pip install git+https://github.com/bharat-nair/yew.git@development
@@ -18,8 +24,8 @@ Fetch an item:
 from yew.item import Item
 
 rune_scimmy = Item(id="1333")
-rune_scimmy.examine		# "A vicious, curved sword."
-rune_scimmy.highalch	# 15360
+rune_scimmy.examine     # "A vicious, curved sword."
+rune_scimmy.highalch    # 15360
 ```
 
 Fetch the latest prices:
