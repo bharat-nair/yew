@@ -38,15 +38,8 @@ class Price:
 
         self.item_id = item_id
 
-        if self.interval == "latest":
-            url = f"{PRICES_URL}/latest?id={item_id}&timestep={self.interval}"
-        else:
-            url = f"{PRICES_URL}/timeseries?timestep={self.interval}&id={item_id}"
-
-        response = (
-            requests.get(url, headers={"User-Agent": USER_AGENT}).json().get("data", {})
-        )
-        price_data = response.get(f"{item_id}")
+        price_data = fetch_item_prices(self.item_id, self.interval)
+        price_data = price_data.get(f"{item_id}")
 
         self.high_price = price_data.get("high", 0)
         self.low_price = price_data.get("low", 0)
