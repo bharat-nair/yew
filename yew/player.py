@@ -1,5 +1,8 @@
-from yew.utils.api import fetch_player
 from dataclasses import dataclass
+
+import requests
+
+from yew import HISCORES_URL, USER_AGENT
 
 
 @dataclass
@@ -123,6 +126,24 @@ ACTIVITIES = [
 ]
 
 
+class PlayerFetcher:
+    @staticmethod
+    def fetch_player_by_name(name: str):
+        url = f"{HISCORES_URL}?player={name}"
+
+        response = requests.get(url, headers={"User-Agent": USER_AGENT}).json()
+
+        player_skills = {}
+        player_activities = {}
+        for skill in response.get("skills", [{}]):
+            player_skills[skill["name"]] = skill
+        for activity in response.get("activities", [{}]):
+            player_activities[activity["name"]] = activity
+
+        return {"skills": player_skills, "activities": player_activities}
+
+
+@dataclass
 class Player:
 
     overall: Skill
@@ -176,7 +197,7 @@ class Player:
     calvarion: Activity
     cerberus: Activity
     chambers_of_xeric: Activity
-    chambers_of_xeric_challenge_mode: Activity
+    chambers_of_xeric__challenge_mode: Activity
     chaos_elemental: Activity
     chaos_fanatic: Activity
     commander_zilyana: Activity
@@ -213,10 +234,10 @@ class Player:
     the_leviathan: Activity
     the_whisperer: Activity
     theatre_of_blood: Activity
-    theatre_of_blood_hard_mode: Activity
+    theatre_of_blood__hard_mode: Activity
     thermonuclear_smoke_devil: Activity
     tombs_of_amascut: Activity
-    tombs_of_amascut_expert_mode: Activity
+    tombs_of_amascut__expert_mode: Activity
     tzkalzuk: Activity
     tztokjad: Activity
     vardorvis: Activity
@@ -228,7 +249,7 @@ class Player:
     zulrah: Activity
 
     def __init__(self, username: str):
-        player_data = fetch_player(username)
+        player_data = PlayerFetcher.fetch_player_by_name(username)
         skills = player_data.get("skills", {})
         activities = player_data.get("activities", {})
 
@@ -250,7 +271,8 @@ class Player:
                 .replace("'", "")
                 .replace("-", "")
                 .replace("(", "")
-                .replace(")", ""),
+                .replace(")", "")
+                .replace(":", "_"),
                 Activity(
                     rank=activities.get(activity, {}).get("rank"),
                     score=activities.get(activity, {}).get("score"),
