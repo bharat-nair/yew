@@ -1,10 +1,11 @@
-from yew.utils.api import fetch_item, fetch_item_prices
-from datetime import datetime
-from yew.utils.format import get_friendly_unit
 from dataclasses import dataclass, field
+import json
+from datetime import datetime
 
 import requests
 
+# from yew.utils.api import fetch_item_prices
+from yew.utils import get_friendly_unit
 from yew import USER_AGENT, ITEMS_URL, ITEMS, PRICES_URL
 
 
@@ -17,6 +18,68 @@ class Trend:
     day30: float
     day90: float
     day180: float
+
+
+class ItemFetcher:
+
+    @staticmethod
+    def fetch_item_by_id(item_id: int):
+        item_data = {}
+
+        item_data = ITEMS.get(item_id, {})
+
+        url = f"{ITEMS_URL}/catalogue/detail.json?item={item_id}"
+        response = (
+            requests.get(url, headers={"User-Agent": USER_AGENT}).json().get("item", {})
+        )
+        item_data["icon"] = response.get("icon")
+        item_data["type"] = response.get("type")
+        item_data["current"] = response.get("current")
+        item_data["today"] = response.get("today")
+        item_data["day30"] = response.get("day30")
+        item_data["day90"] = response.get("day90")
+        item_data["day180"] = response.get("day180")
+
+        return item_data
+
+    @staticmethod
+    def fetch_item_by_name(name: str):
+        item_data = {}
+
+        for _id in ITEMS:
+            if ITEMS[_id].get("name").lower() in name.lower():
+                item_data = ITEMS[_id]
+                item_id = _id
+                break
+
+        url = f"{ITEMS_URL}/catalogue/detail.json?item={item_id}"
+        response = (
+            requests.get(url, headers={"User-Agent": USER_AGENT}).json().get("item", {})
+        )
+        item_data["icon"] = response.get("icon")
+        item_data["type"] = response.get("type")
+        item_data["current"] = response.get("current")
+        item_data["today"] = response.get("today")
+        item_data["day30"] = response.get("day30")
+        item_data["day90"] = response.get("day90")
+        item_data["day180"] = response.get("day180")
+
+        return item_data
+
+
+class PriceFetcher:
+
+    @staticmethod
+    def fetch_item_price(item_id: int, interval: str):
+        if interval == "latest":
+            url = f"{GE_URL}/latest?id={item_id}"
+        else:
+            url = f"{GE_URL}/timeseries?timestep={interval}&id={item_id}"
+
+        response = (
+            requests.get(url, headers={"User-Agent": USER_AGENT}).json().get("data", {})
+        )
+        return response
 
 
 @dataclass()
@@ -38,7 +101,7 @@ class Price:
 
         self.item_id = item_id
 
-        price_data = fetch_item_prices(self.item_id, self.interval)
+        price_data = PriceFetcher.fetch_item_price(self.item_id, self.interval)
         price_data = price_data.get(f"{item_id}")
 
         self.high_price = price_data.get("high", 0)
@@ -76,7 +139,7 @@ class Item:
         if not isinstance(id, int):
             raise TypeError(f"Expected id to be of type int, got {type(id)}")
 
-        item_data = fetch_item(id)
+        item_data = ItemFetcher.fetch_item_by_id(id)
 
         return cls(
             id=id,
@@ -105,10 +168,10 @@ class Item:
         if not isinstance(name, str):
             raise TypeError(f"Expected name to be of type str, got {type(name)}")
 
-        item_data = fetch_item(name=name)
+        item_data = ItemFetcher.fetch_item_by_name(name)
 
         return cls(
-            id=item_id,
+            id=item_data.get("item_id"),
             name=item_data.get("name"),
             members=item_data.get("members"),
             examine=item_data.get("examine"),
