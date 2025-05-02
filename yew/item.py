@@ -72,9 +72,9 @@ class PriceFetcher:
     @staticmethod
     def fetch_item_price(item_id: int, interval: str):
         if interval == "latest":
-            url = f"{GE_URL}/latest?id={item_id}"
+            url = f"{PRICES_URL}/latest?id={item_id}"
         else:
-            url = f"{GE_URL}/timeseries?timestep={interval}&id={item_id}"
+            url = f"{PRICES_URL}/timeseries?timestep={interval}&id={item_id}"
 
         response = (
             requests.get(url, headers={"User-Agent": USER_AGENT}).json().get("data", {})
@@ -95,11 +95,12 @@ class Price:
     interval: str = "latest"
     friendly_units: bool = False
 
-    def __init__(self, item_id: int):
+    def __init__(self, item_id: int, interval: str):
         if not item_id:
             raise RuntimeError("Item ID is not provided")
 
         self.item_id = item_id
+        self.interval = interval
 
         price_data = PriceFetcher.fetch_item_price(self.item_id, self.interval)
         price_data = price_data.get(f"{item_id}")
@@ -130,7 +131,7 @@ class Item:
     type_: str
     limit: int
     trend: Trend
-    _price: Price | None = field(init=False, repr=False, default=None)
+    price: Price | None = field(init=False, default=None)
 
     @classmethod
     def from_id(cls, id: int):
@@ -190,9 +191,6 @@ class Item:
             ),
         )
 
-    @property
-    def price(self):
-        if self._price is None:
-            self._price = Price(self.id)
-
-        return self._price
+    def prices(self, interval: str):
+        self.price = Price(self.id, interval)
+        return self.price
