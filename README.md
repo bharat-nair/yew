@@ -23,7 +23,7 @@ Fetch an item:
 ```
 from yew.item import Item
 
-rune_scimmy = Item(id="1333")
+rune_scimmy = Item.from_id(1333)
 rune_scimmy.examine     # "A vicious, curved sword."
 rune_scimmy.highalch    # 15360
 ```
@@ -44,6 +44,26 @@ from yew.player import Player
 lynx_titan = Player("Lynx Titan")
 lynx_titan.cooking.level	# 99
 lynx_titan.cooking.xp		# 200000000
+```
+
+Fetch an NPC (uses data from the [OSRS Wiki](https://oldschool.runescape.wiki/)):
+
+```
+from yew.npc import Npc
+
+edgeville_master = Npc.from_wiki("Vannaka")
+edgeville_master.name # 'Vannaka'
+edgeville_master.race # 'Human'
+edgeville_master.examine # 'He looks dangerous'
+edgeville_master.locations # ['Edgeville Dungeon']
+
+rodent = Npc.from_wiki("Rat")
+rodent.examine # 'Apopular dwarven delicacy'
+rodent.level # 1
+rodent.aggresive # False
+rodent.hitpoints # 2
+rodent.attack # 1
+rodent.strength # 1
 ```
 
 ## Contributing
