@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "yew"
-version = "0.1.1"
+version = "0.12.1"
 authors = [
   { name="Bharat Nair", email="bharat@rubberducker.xyz" },
 ]
@@ -17,6 +17,7 @@ dependencies = [
   "idna==3.6",
   "requests==2.31.0",
   "urllib3==2.2.1",
+  "mwparserfromhell==0.6.6",
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
